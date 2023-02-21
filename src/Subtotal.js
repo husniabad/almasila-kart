@@ -3,15 +3,12 @@ import React from 'react';
 import './Subtotal.css';
 import CurrencyFormat from 'react-currency-format';
 import { useStateValue } from './StateProvider';
+import { getBasketTotal } from './reducer';
 
 function 
 Subtotal() {
-  const ryalPrice = 1;
-  const [{basket}, dispatch] = useStateValue();
 
-  const totalPrice = basket.reduce((accumulator, item) => {
-    return accumulator + item.price*ryalPrice;
-  }, 0);
+    const [{basket}, dispatch] = useStateValue();
 
   return (
     <div className='subtotal'>
@@ -27,11 +24,11 @@ Subtotal() {
             </small>
             </>
         )}
-        decimalScale={0}
-        value={totalPrice}
+        decimalScale={2}
+        value={getBasketTotal(basket)}
         displayType={"text"}
         thousandSeparator={true}
-        prefix={"YR"}
+        prefix={"$"}
         />
         <button> Proceed to checkout</button>
     </div>
