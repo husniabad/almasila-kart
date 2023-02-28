@@ -42,11 +42,12 @@ switch(action.type){
             ...state,
             user: action.user
         }
-        
-        // return { ...state,
-        //         basket: state.basket.filter(item =>
-        //             item.id !== action.id)
-        // }
+
+    case "EMPTY_BASKET":
+        return {
+            ...state,
+            basket: []
+        }
 
     default: 
         return state;

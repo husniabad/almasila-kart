@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "almasila-kart"
-  }
+    "default": "almasila-kart3",
+    "build": "almasila-kart3"
+  },
+  "targets": {},
+  "etags": {}
 }
