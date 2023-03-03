@@ -21,28 +21,28 @@ function Login() {
         .catch(error => alert(error.message))
   }
 
-  const register = e => {
-    e.preventDefault();
-    //firebase register
+//   const register = e => {
+//     e.preventDefault();
+//     //firebase register
 
-    auth
-        .createUserWithEmailAndPassword(email, password)
-        .then((auth) =>{
-            // sucess create new user
-            console.log(auth);
-            if (auth){
-                history.push('/');
-            }
-        }
-        )
-        .catch( error => alert(error.message));
-  }
+//     auth
+//         .createUserWithEmailAndPassword(email, password)
+//         .then((auth) =>{
+//             // sucess create new user
+//             console.log(auth);
+//             if (auth){
+//                 history.push('/');
+//             }
+//         }
+//         )
+//         .catch( error => alert(error.message));
+//   }
 
   return (
     <div className='login'>
         <Link to='/'>
             <img className='login__logo'
-            src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png' />
+            src='http://clipart-library.com/images_k/palm-tree-clipart-transparent/palm-tree-clipart-transparent-19.png' />
         </Link>
 
         <div className='login__container'>
@@ -61,12 +61,15 @@ function Login() {
                 onClick={signIn}
                 type='submit'>Sign In</button>
             </form>
-            <p>
-            By signing-in you agree to Amazon terms and conditions
-            By signing-in you agree to Amazon terms and conditions
-            </p>
-            <button className='login_registerButton'
-            onClick={register}>Create your accoun!</button>
+            <div className='login__switch'>
+                <h3>
+                You Don't Have An Account??
+                </h3>
+                <Link to="/register"> 
+                    <button className='login__registerButton' >
+                    Create Your Account Now!</button>
+                </Link>
+            </div>
         </div>
     </div>
   )

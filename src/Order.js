@@ -7,12 +7,15 @@ import './Order.css';
 function Order({ order }) {
   return (
     <div className='order'>
-        <h2>Order</h2>
-        <p>{moment.unix(order.data.created).format(" MMMM Do YYYY, h:mma")}
+        <div className='order__header'>
+
+        <h2>Order No #</h2>
+        <p>{moment.unix(order.data.created).format("DD MMMM YYYY, h:mma")}
         </p>
         <p className='order__id'>
-            <small>{order.id}</small>
+         Order ID:<small>{ order.id}</small>
         </p>
+        </div>
         {order.data.basket?.map((item) => (
             <CheckoutProduct 
                 id={item.id}
@@ -28,6 +31,7 @@ function Order({ order }) {
             renderText={(value)=>(
                 <>
                 <h3 className='order__total'>Order Total: {value}</h3>
+                <h3 className='order__paymentMethod'>payment method: {order.data.payment}</h3>
                 </>
             )}
             decimalScale={2}

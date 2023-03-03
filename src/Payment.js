@@ -22,6 +22,8 @@ function Payment() {
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState(true);
+  const [paymentType, setPaymentType] = useState('card');
+
 
   useEffect(() => {
    //generate the special stripe 
@@ -52,15 +54,15 @@ function Payment() {
     setProcessing(true);
 
     try {
-    const payload = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-            card: elements.getElement(CardElement),
-        },
-    });
-    if (payload.error) {
-        setError(`Payment failed: ${payload.error.message}`);
-        setProcessing(false);
-    }else{
+      const payload = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+              card: elements.getElement(CardElement),
+          },
+      });
+      if (payload.error) {
+          setError(`Payment failed: ${payload.error.message}`);
+          setProcessing(false);
+      }else{
     
       // paymentIntent = payment confimation
 
@@ -71,7 +73,8 @@ function Payment() {
       .set({
         basket: basket,
         amount: payload.paymentIntent.amount,
-        created: payload.paymentIntent.created
+        created: payload.paymentIntent.created,
+        payment: "💳"
       });
 
       
@@ -90,14 +93,51 @@ function Payment() {
   }
 };
 
-  const handleChange = event => {
-    //listen for changes
-    //display any errors
-    setDisabled(event.empty);
-    setError(event.error ? event.error.message : "");
-  }
+const handleCashSubmit = async (event) => {
+  event.preventDefault();
+  setProcessing(true);
 
-  return (
+  try {
+    // Save the order data to the database
+    const order = {
+      basket: basket,
+      amount: getBasketTotal(basket) *100,
+      created: Math.floor(new Date().getTime()/1000),
+      payment: '💵',
+    };
+    
+    
+    const docRef = await 
+    db
+    .collection('users')
+    .doc(user?.uid)
+    .collection('orders')
+    .add(order);
+    
+    setSucceeded(true);
+    setError(null);
+    setProcessing(false);
+    
+    dispatch({
+      type: 'EMPTY_BASKET',
+    });
+    
+    // Redirect the user to the orders page
+    history.replace('/orders');
+  } catch (error) {
+    setError(`Payment failed: ${error.message}`);
+  }
+};
+
+const handleChange = event => {
+  //listen for changes
+  //display any errors
+  setDisabled(event.empty);
+  setError(event.error ? event.error.message : "");
+}
+// console.log("time is:",Math.floor( new Date().getTime()/1000));
+
+return (
     <div className='payment'>
         <div className='payment__container'>
             <h1>Checkout{': '}({
@@ -142,32 +182,62 @@ function Payment() {
                 <div className='payment__title'>
                     <h3>Payment Method</h3>
                 </div>
-                <div className='payment__details'>
-                    {/* Stripe */}
-                    <form onSubmit={handleSubmit}>
-                        <CardElement onChange={handleChange}/>
-                        <div className='payment_priceContainer'>
-                            <CurrencyFormat 
-                                renderText={(value)=>(
-                                    <>
-                                    <h3>Order Total: {value}</h3>
-                                    </>
-                                )}
-                                decimalScale={2}
-                                value={getBasketTotal(basket)}
-                                displayType={"text"}
-                                thousandSeparator={true}
-                                prefix={"$"}
-                            />
-                            <button disabled={processing || disabled ||
-                            succeeded}>
-                                <span>{processing ? <p>processing..</p>
-                                : "Buy Now"}</span>
-                            </button>
-                        </div>
-                        {/* error */}
-                        {error && <div>{error}</div>}
-                    </form>
+                <div className='payment__method'>
+                  <div className='payment__methodCard'>
+                    <div className='payment__methodSelect'>
+                      <input type='radio' id='card' name='paymentMethod' value='card' checked={paymentType === 'card'} onChange={() => setPaymentType('card')} />
+                      <label htmlFor='card'>Card </label>
+                    </div>
+                    <div className={`payment__details ${paymentType === 'card' ? 'show' : 'hide'}`}>
+                        {/* Stripe */}
+                        <form onSubmit={handleSubmit}>
+                            <CardElement onChange={handleChange}/>
+                            <div className='payment_priceContainer'>
+                                <CurrencyFormat 
+                                    renderText={(value)=>(
+                                        <>
+                                        <h3>Order Total: {value}</h3>
+                                        </>
+                                    )}
+                                    decimalScale={2}
+                                    value={getBasketTotal(basket)}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    prefix={"$"}
+                                />
+                                <button disabled={processing || disabled || succeeded || basket.length ===0||!user}>
+                                    <span>{!user? <p>please Login first !</p> : (processing ? <p>processing...</p> : "Buy Now")}</span>
+                                </button>
+                            </div>
+                            {/* error */}
+                            {error && <div>{error}</div>}
+                        </form>
+                    </div>
+                  </div>
+                  <div className='payment__methodCash'>
+                    <div className='payment__methodSelect'>
+                      <input type='radio' id='cash' name='paymentMethod' value='cash' checked={paymentType === 'cash'} onChange={() => setPaymentType('cash')} />
+                      <label htmlFor='cash'>Cash</label>
+                    </div>
+                    <div className={`payment__details ${paymentType === 'cash' ? 'show' : 'hide'}`}>
+                      <br /> <p> {"  "} Please pay cash upon delivery.</p>
+                      <CurrencyFormat 
+                                    renderText={(value)=>(
+                                        <>
+                                        <h3>Order Total: {value}</h3>
+                                        </>
+                                    )}
+                                    decimalScale={2}
+                                    value={getBasketTotal(basket)}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    prefix={"$"}
+                                />
+                      <button onClick={handleCashSubmit} disabled={processing ||  succeeded || basket.length ===0 || !user}>
+                          <span>{!user? <p>please log in first</p> : (processing ? <p>processing...</p> : "Buy Now")}</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
             </div>
 

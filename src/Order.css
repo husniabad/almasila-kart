@@ -6,13 +6,31 @@
     position: relative;
 }
 
+.order__header{
+    margin-bottom: 30px;
+    padding: 20px;
+    border-bottom: 1px solid gray;
+}
+
 .order__id{
     position: absolute;
     top: 40px;
     right: 20px;
 }
 
+.order__id > small{
+    margin-left: 5px;
+    color:darkgreen;
+    font-weight: 600;
+}
+
 .order__total {
     font-weight: 500;
     text-align: right;
+}
+
+.order__paymentMethod{
+    text-align: right;
+    font-weight: 400;
+
 }

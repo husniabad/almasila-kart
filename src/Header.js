@@ -20,7 +20,7 @@ function Header() {
     <div className='header'>
       <Link to="/">
         <img className='header__logo' 
-        src='http://pngimg.com/uploads/amazon/amazon_PNG11.png'></img>
+        src='http://clipart-library.com/images_k/palm-tree-clipart-transparent/palm-tree-clipart-transparent-19.png'></img>
       </Link>
         <div className='header__search'>
             <input className='header__searchInput' type='text' />
@@ -36,11 +36,11 @@ function Header() {
               'Sign Out' : 'Sign In'}</span>
             </div>
           </Link>
-          <Link to='/orders'>
-          <div className='header__option'>
-            <span className='header__optionLineOne'>Returns </span>
-            <span className='header__optionLineTwo'>& Orders</span>
-          </div>
+          <Link to='/orders' >
+            <div className='header__option'>
+              <span className='header__optionLineOne'>Returns </span>
+              <span className='header__optionLineTwo'>& Orders</span>
+            </div>
           </Link>
 
           <div className='header__option'>
